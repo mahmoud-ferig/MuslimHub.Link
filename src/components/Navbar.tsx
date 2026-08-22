@@ -25,11 +25,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isDark, setIsDark] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
-  // Initialize theme from HTML class or localStorage
+  // Initialize theme from localStorage (defaults to light mode)
   useEffect(() => {
-    const isDarkMode =
-      localStorage.getItem("theme") === "dark" ||
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const isDarkMode = localStorage.getItem("theme") === "dark";
     setIsDark(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
