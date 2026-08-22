@@ -9,42 +9,79 @@ import {
 } from "lucide-react";
 import { GithubIcon, CrescentCodeLogo } from "./Icons";
 
-interface NavbarProps {
-  favoriteCount?: number;
-  onOpenSubmit?: () => void;
-  onFilterFavorites?: () => void;
-  isFavoritesFilterActive?: boolean;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({
-  favoriteCount = 0,
-  onOpenSubmit,
-  onFilterFavorites,
-  isFavoritesFilterActive = false
-}) => {
+export const Navbar: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [favoriteCount, setFavoriteCount] = useState<number>(0);
+  const [isFavoritesActive, setIsFavoritesActive] = useState<boolean>(false);
 
   // Initialize theme from localStorage (defaults to light mode)
   useEffect(() => {
-    const isDarkMode = localStorage.getItem("theme") === "dark";
+    const isDarkMode =
+      localStorage.getItem("theme") === "dark" ||
+      document.documentElement.classList.contains("dark");
     setIsDark(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
+
+    // Load initial favorites count
+    try {
+      const saved = localStorage.getItem("muslimhub_favorites");
+      if (saved) {
+        setFavoriteCount(JSON.parse(saved).length);
+      }
+    } catch {
+      // ignore
+    }
+
+    // Listen for custom favorites update events
+    const updateFavorites = () => {
+      try {
+        const saved = localStorage.getItem("muslimhub_favorites");
+        if (saved) {
+          setFavoriteCount(JSON.parse(saved).length);
+        }
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener("favorites-updated", updateFavorites);
+    return () => window.removeEventListener("favorites-updated", updateFavorites);
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
+    const currentlyDark = document.documentElement.classList.contains("dark");
+    const nextDark = !currentlyDark;
+    
+    if (nextDark) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
+    }
+    setIsDark(nextDark);
+  };
+
+  const handleOpenSubmit = () => {
+    window.dispatchEvent(new CustomEvent("open-submit-modal"));
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleToggleFavorites = () => {
+    const next = !isFavoritesActive;
+    setIsFavoritesActive(next);
+    window.dispatchEvent(new CustomEvent("toggle-favorites-filter", { detail: { active: next } }));
+    setIsMobileMenuOpen(false);
+    
+    // Scroll to directory if not already there
+    const dirElement = document.getElementById("directory");
+    if (dirElement) {
+      dirElement.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -91,36 +128,32 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Actions */}
         <div className="hidden sm:flex items-center gap-2.5">
           {/* Bookmarks Toggle button */}
-          {onFilterFavorites && (
-            <button
-              onClick={onFilterFavorites}
-              className={`relative inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition cursor-pointer ${
-                isFavoritesFilterActive
-                  ? "bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-300 dark:border-amber-700"
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700"
-              }`}
-              title="Filter by saved bookmarks"
-            >
-              <Bookmark className={`h-3.5 w-3.5 ${isFavoritesFilterActive ? "fill-current text-amber-600 dark:text-amber-400" : ""}`} />
-              <span>Saved</span>
-              {favoriteCount > 0 && (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold text-white">
-                  {favoriteCount}
-                </span>
-              )}
-            </button>
-          )}
+          <button
+            onClick={handleToggleFavorites}
+            className={`relative inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition cursor-pointer ${
+              isFavoritesActive
+                ? "bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-200 border border-amber-300 dark:border-amber-700"
+                : "bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            }`}
+            title="Filter directory by saved bookmarks"
+          >
+            <Bookmark className={`h-3.5 w-3.5 ${isFavoritesActive ? "fill-current text-amber-600 dark:text-amber-400" : ""}`} />
+            <span>Saved</span>
+            {favoriteCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold text-white">
+                {favoriteCount}
+              </span>
+            )}
+          </button>
 
           {/* Submit Button */}
-          {onOpenSubmit && (
-            <button
-              onClick={onOpenSubmit}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition cursor-pointer"
-            >
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span>Submit Project</span>
-            </button>
-          )}
+          <button
+            onClick={handleOpenSubmit}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition cursor-pointer"
+          >
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span>Submit Project</span>
+          </button>
 
           {/* GitHub Repo */}
           <a
@@ -136,10 +169,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Dark / Light Toggle */}
           <button
             onClick={toggleTheme}
+            type="button"
             className="rounded-xl border border-gray-200 bg-white p-2 text-gray-600 hover:bg-gray-50 hover:text-emerald-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-emerald-400 transition cursor-pointer"
             aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
           >
-            {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+            {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-gray-700" />}
           </button>
         </div>
 
@@ -147,14 +181,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex sm:hidden items-center gap-2">
           <button
             onClick={toggleTheme}
-            className="rounded-xl p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+            type="button"
+            className="rounded-xl p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
             aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+            {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-gray-700" />}
           </button>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="rounded-xl p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+            type="button"
+            className="rounded-xl p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
             aria-label="Open navigation menu"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -189,36 +225,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             </a>
 
             <div className="my-2 border-t border-gray-100 dark:border-gray-800 pt-3 flex flex-col gap-2">
-              {onFilterFavorites && (
-                <button
-                  onClick={() => {
-                    onFilterFavorites();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/80 px-3 py-2.5 text-xs font-semibold text-gray-800 dark:text-gray-200"
-                >
-                  <span className="flex items-center gap-2">
-                    <Bookmark className="h-4 w-4 text-amber-500" />
-                    Saved Bookmarks
-                  </span>
-                  <span className="rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] text-white">
-                    {favoriteCount}
-                  </span>
-                </button>
-              )}
+              <button
+                onClick={handleToggleFavorites}
+                className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800/80 px-3 py-2.5 text-xs font-semibold text-gray-800 dark:text-gray-200 cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <Bookmark className="h-4 w-4 text-amber-500" />
+                  Saved Bookmarks
+                </span>
+                <span className="rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] text-white">
+                  {favoriteCount}
+                </span>
+              </button>
 
-              {onOpenSubmit && (
-                <button
-                  onClick={() => {
-                    onOpenSubmit();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700"
-                >
-                  <PlusCircle className="h-4 w-4" />
-                  Submit an Open Source Project
-                </button>
-              )}
+              <button
+                onClick={handleOpenSubmit}
+                className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 cursor-pointer"
+              >
+                <PlusCircle className="h-4 w-4" />
+                Submit an Open Source Project
+              </button>
 
               <a
                 href="https://github.com/mahmoud-ferig/MuslimHub.Link"

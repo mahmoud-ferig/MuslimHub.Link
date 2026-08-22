@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import IslamicPattern from "../components/IslamicPattern.astro";
+import Navbar from "../components/Navbar";
 
 interface Props {
   title?: string;
@@ -63,10 +64,13 @@ const {
     <!-- Islamic SVG Background Pattern -->
     <IslamicPattern />
 
+    <!-- Top Sticky Navigation Bar -->
+    <Navbar client:load />
+
     <!-- Accessibility Skip Link -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus:outline-none"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-16 focus:z-50 focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus:outline-none"
     >
       Skip to main content
     </a>

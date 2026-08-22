@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import type { Project, ProjectCategory, SortOption } from "../types/project";
 import { CATEGORIES, PROJECTS } from "../data/projects";
 import ProjectCard from "./ProjectCard";
-import Navbar from "./Navbar";
 import { SubmitModal } from "./SubmitModal";
 import {
   Search,
@@ -33,7 +32,7 @@ const CATEGORY_ICON_COMPONENTS: Record<string, React.ReactNode> = {
 };
 
 export const Directory: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("" );
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>("all");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("featured");
@@ -42,7 +41,7 @@ export const Directory: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isSubmitOpen, setIsSubmitOpen] = useState<boolean>(false);
 
-  // Load favorites on mount
+  // Load favorites on mount and setup event listeners from navbar
   useEffect(() => {
     try {
       const saved = localStorage.getItem("muslimhub_favorites");
@@ -52,6 +51,24 @@ export const Directory: React.FC = () => {
     } catch {
       // ignore
     }
+
+    const handleSubmitOpen = () => setIsSubmitOpen(true);
+    const handleToggleFavorites = (e: Event) => {
+      const customEvent = e as CustomEvent<{ active?: boolean }>;
+      if (customEvent.detail && typeof customEvent.detail.active === "boolean") {
+        setFavoritesOnly(customEvent.detail.active);
+      } else {
+        setFavoritesOnly((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("open-submit-modal", handleSubmitOpen);
+    window.addEventListener("toggle-favorites-filter", handleToggleFavorites);
+
+    return () => {
+      window.removeEventListener("open-submit-modal", handleSubmitOpen);
+      window.removeEventListener("toggle-favorites-filter", handleToggleFavorites);
+    };
   }, []);
 
   const toggleFavorite = (id: string) => {
@@ -59,6 +76,7 @@ export const Directory: React.FC = () => {
       const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
       try {
         localStorage.setItem("muslimhub_favorites", JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent("favorites-updated"));
       } catch {
         // ignore
       }
@@ -135,14 +153,6 @@ export const Directory: React.FC = () => {
 
   return (
     <>
-      {/* Top sticky Navbar */}
-      <Navbar
-        favoriteCount={favorites.length}
-        onOpenSubmit={() => setIsSubmitOpen(true)}
-        onFilterFavorites={() => setFavoritesOnly((prev) => !prev)}
-        isFavoritesFilterActive={favoritesOnly}
-      />
-
       {/* Directory Section Container */}
       <div id="directory" className="scroll-mt-24 mt-12 sm:mt-16">
         {/* Header & Controls Container */}
@@ -162,7 +172,7 @@ export const Directory: React.FC = () => {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200 cursor-pointer"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
@@ -190,7 +200,7 @@ export const Directory: React.FC = () => {
               <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50/80 p-1 dark:border-gray-700 dark:bg-[#111f22]">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`rounded-lg p-1.5 transition ${
+                  className={`rounded-lg p-1.5 transition cursor-pointer ${
                     viewMode === "grid"
                       ? "bg-white text-emerald-600 shadow-sm dark:bg-gray-800 dark:text-emerald-400"
                       : "text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
@@ -202,7 +212,7 @@ export const Directory: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`rounded-lg p-1.5 transition ${
+                  className={`rounded-lg p-1.5 transition cursor-pointer ${
                     viewMode === "list"
                       ? "bg-white text-emerald-600 shadow-sm dark:bg-gray-800 dark:text-emerald-400"
                       : "text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
@@ -232,7 +242,7 @@ export const Directory: React.FC = () => {
                     setSelectedCategory(cat.id);
                     if (favoritesOnly) setFavoritesOnly(false);
                   }}
-                  className={`flex items-center gap-2 shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-2 shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
                     isSelected
                       ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20 dark:bg-emerald-500"
                       : "bg-gray-100/80 text-gray-700 hover:bg-gray-200 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:bg-gray-800"
@@ -256,7 +266,7 @@ export const Directory: React.FC = () => {
             {/* Saved Bookmarks Tab */}
             <button
               onClick={() => setFavoritesOnly(!favoritesOnly)}
-              className={`flex items-center gap-2 shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-2 shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
                 favoritesOnly
                   ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
                   : "bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:hover:bg-amber-900/50"
