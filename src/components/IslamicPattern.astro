@@ -1,0 +1,33 @@
+---
+// Lightweight decorative Islamic geometric pattern background
+---
+
+<div class="pointer-events-none absolute inset-0 overflow-hidden opacity-35 dark:opacity-20 select-none z-0" aria-hidden="true">
+  <svg class="absolute w-full h-full text-emerald-600/15 dark:text-emerald-400/15" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <defs>
+      <pattern id="islamic-star-pattern" width="80" height="80" patternUnits="userSpaceOnUse">
+        <!-- 8-point geometric star motif -->
+        <g stroke="currentColor" stroke-width="0.75" fill="none">
+          <path d="M40 0 L48 24 L72 16 L64 40 L88 48 L64 56 L72 80 L48 72 L40 96 L32 72 L8 80 L16 56 L-8 48 L16 40 L8 16 L32 24 Z" />
+          <circle cx="40" cy="40" r="14" stroke-dasharray="2 3" opacity="0.7" />
+          <circle cx="40" cy="40" r="4" fill="currentColor" fill-opacity="0.15" />
+          <path d="M0 0 L15 15 M80 0 L65 15 M0 80 L15 65 M80 80 L65 65" opacity="0.5" />
+        </g>
+      </pattern>
+      <radialGradient id="pattern-mask-gradient" cx="50%" cy="30%" r="60%">
+        <stop offset="0%" stop-color="white" stop-opacity="1" />
+        <stop offset="60%" stop-color="white" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="white" stop-opacity="0.05" />
+      </radialGradient>
+      <mask id="pattern-fade-mask">
+        <rect width="100%" height="100%" fill="url(#pattern-mask-gradient)" />
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#islamic-star-pattern)" mask="url(#pattern-fade-mask)" />
+  </svg>
+  
+  <!-- Subtle radial ambient glows -->
+  <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-emerald-400/20 via-teal-300/10 to-transparent blur-3xl rounded-full dark:from-emerald-500/15 dark:via-teal-500/5"></div>
+  <div class="absolute top-[40%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-br from-emerald-500/10 to-transparent blur-3xl rounded-full dark:from-emerald-500/10"></div>
+  <div class="absolute top-[70%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-tr from-amber-500/10 to-transparent blur-3xl rounded-full dark:from-amber-500/5"></div>
+</div>

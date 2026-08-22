@@ -1,4 +1,7 @@
 ---
+import "../styles/global.css";
+import IslamicPattern from "../components/IslamicPattern.astro";
+
 interface Props {
   title?: string;
   description?: string;
@@ -6,50 +9,125 @@ interface Props {
 }
 
 const {
-  title = "MuslimHub",
-  description = "MuslimHub is a central directory for open-source Islamic applications, developer resources, and tools for the Ummah.",
+  title = "MuslimHub | The Open-Source Islamic Project Directory",
+  description = "Central directory for curated open-source Islamic applications, developer resources, APIs, and tools for the Ummah.",
   canonicalUrl = "https://muslimhub.link/"
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    <meta name="theme-color" content="#059669" />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content="MuslimHub" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+
+    <!-- Anti-flicker Dark Theme Script -->
+    <script is:inline>
+      (function () {
+        try {
+          const theme = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (theme === "dark" || (!theme && prefersDark)) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="min-h-screen bg-emerald-50 text-gray-800 antialiased">
+  <body class="relative min-h-screen bg-[#f8faf9] text-gray-900 antialiased dark:bg-[#070d0e] dark:text-gray-100 selection:bg-emerald-500 selection:text-white transition-colors duration-200">
+    <!-- Islamic SVG Background Pattern -->
+    <IslamicPattern />
+
+    <!-- Accessibility Skip Link -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:text-emerald-700"
-      aria-label="Skip to main content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus:outline-none"
     >
       Skip to main content
     </a>
-    <header class="border-b border-emerald-100 bg-white/80 backdrop-blur">
-      <div class="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
-        <p class="text-sm font-medium text-emerald-700">MuslimHub</p>
-      </div>
-    </header>
-    <main id="main-content" class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-20">
       <slot />
     </main>
-    <footer class="border-t border-emerald-100 bg-white">
-      <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600 sm:px-6 lg:px-8">
-        Built for the Ummah with open source.
+
+    <!-- Modern Footer -->
+    <footer id="about" class="relative z-10 border-t border-gray-200/80 bg-white/70 backdrop-blur-md dark:border-gray-800/80 dark:bg-[#091113]/80">
+      <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-gray-100 dark:border-gray-800/70">
+          <div class="flex items-center gap-3 text-center md:text-left">
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold text-lg">
+              M
+            </div>
+            <div>
+              <p class="font-bold text-gray-900 dark:text-white">MuslimHub.Link</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                Central directory for open-source Islamic tools & developer resources.
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Footer Links -->
+          <div class="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-gray-600 dark:text-gray-400">
+            <a href="#directory" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+              Explore Directory
+            </a>
+            <a href="#featured" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+              Featured App
+            </a>
+            <a
+              href="https://github.com/mahmoud-ferig/MuslimHub.Link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+            >
+              GitHub Repository
+            </a>
+            <a
+              href="https://github.com/mahmoud-ferig/MuslimHub.Link/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+            >
+              Suggest a Project
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
+          <p class="text-center sm:text-left">
+            Built for the Ummah with <span class="text-red-500">❤️</span> and open source. May Allah accept it as Sadaqah Jariyah.
+          </p>
+          <p class="text-center sm:text-right">
+            Open Source • MIT Licensed
+          </p>
+        </div>
       </div>
     </footer>
   </body>
