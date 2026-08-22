@@ -1,62 +1,92 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import ProjectCard from "../components/ProjectCard";
+import Directory from "../components/Directory";
+import { FeaturedProject } from "../components/FeaturedProject";
+import StatsSection from "../components/StatsSection.astro";
+import { PROJECTS } from "../data/projects";
+
+const featuredProject = PROJECTS.find((p) => p.id === "quran-audio-tracker") || PROJECTS[0];
 
 const description =
-  "MuslimHub is a central directory for open-source Islamic applications, developer resources, and tools for the Ummah.";
-
-const projects = [
-  {
-    title: "Quran.com API",
-    description: "A robust API powering Quranic content and services for developers.",
-    href: "https://github.com/quran/quran.com-api"
-  },
-  {
-    title: "Aladhan",
-    description: "Prayer times API with global coverage and useful Islamic date tools.",
-    href: "https://github.com/islamic-network/api.aladhan.com"
-  },
-  {
-    title: "Islamic Network",
-    description: "Open APIs and datasets for Quran, hadith, prayer times, and more.",
-    href: "https://github.com/islamic-network"
-  }
-];
+  "MuslimHub is a central directory for open-source Islamic applications, developer resources, APIs, and tools built for the Ummah.";
 ---
 
-<Layout title="MuslimHub | Open-Source Islamic Project Directory" description={description} canonicalUrl="https://muslimhub.link/">
-  <section class="rounded-2xl border border-emerald-100 bg-white p-8 shadow-sm">
-    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">MuslimHub</h1>
-    <p class="mt-4 max-w-3xl text-base leading-7 text-gray-700 sm:text-lg">
-      MuslimHub is a central directory for open-source Islamic applications, developer resources, and tools for the Ummah.
+<Layout
+  title="MuslimHub | The Open-Source Islamic Project Directory"
+  description={description}
+  canonicalUrl="https://muslimhub.link/"
+>
+  <!-- Hero Section -->
+  <section class="pt-8 sm:pt-14 pb-8 sm:pb-12 text-center max-w-4xl mx-auto">
+    <!-- Calligraphic Arabic Bismillah Greeting -->
+    <div class="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50/60 px-4 py-1.5 dark:border-emerald-900/60 dark:bg-emerald-950/40 backdrop-blur-sm mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <span class="font-arabic text-base sm:text-lg text-emerald-800 dark:text-emerald-300">
+        بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+      </span>
+    </div>
+
+    <!-- Main Hero Headline -->
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.15]">
+      Central Directory for <br class="hidden sm:inline" />
+      <span class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 bg-clip-text text-transparent dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-300">
+        Open-Source Islamic
+      </span>{" "}
+      Projects
+    </h1>
+
+    <!-- Subtitle description -->
+    <p class="mt-5 text-base sm:text-lg lg:text-xl leading-relaxed text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      Discover curated applications, developer APIs, libraries, and datasets built for the Ummah — 100% free, transparent, and community-powered.
     </p>
-  </section>
 
-  <section class="mt-10">
-    <h2 class="text-2xl font-semibold text-gray-900">Featured App</h2>
-    <article class="mt-4 rounded-2xl border-2 border-emerald-300 bg-emerald-100/60 p-6 shadow-sm">
-      <h3 class="text-xl font-semibold text-gray-900">Quran Audio Tracker</h3>
-      <p class="mt-2 text-gray-700">
-        A Progressive Web App to track and manage your daily Quran listening and memorization.
-      </p>
+    <!-- Hero CTA Buttons -->
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
       <a
-        href="https://github.com/mahmoud-ferig/Quran-Audio-Tracker-PWA-"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Open Quran Audio Tracker on GitHub"
-        class="mt-4 inline-flex rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+        href="#directory"
+        class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-emerald-600/25 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 transition-all hover:scale-[1.02]"
       >
-        View on GitHub
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Explore All Projects</span>
       </a>
-    </article>
-  </section>
 
-  <section class="mt-10">
-    <h2 class="text-2xl font-semibold text-gray-900">Community Open Source Projects</h2>
-    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((project) => (
-        <ProjectCard {...project} />
-      ))}
+      <a
+        href="https://github.com/mahmoud-ferig/MuslimHub.Link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 rounded-2xl border border-gray-200 bg-white/90 px-6 py-3.5 text-sm font-bold text-gray-800 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800/90 dark:text-gray-200 dark:hover:bg-gray-800 transition-all hover:scale-[1.02]"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+        </svg>
+        <span>Contribute on GitHub</span>
+      </a>
+    </div>
+
+    <!-- Key Badges Cluster -->
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+      <span class="rounded-full bg-gray-100 dark:bg-gray-800/60 px-3 py-1 border border-gray-200/60 dark:border-gray-700/60">
+        ✨ 15+ Verified Projects
+      </span>
+      <span class="rounded-full bg-gray-100 dark:bg-gray-800/60 px-3 py-1 border border-gray-200/60 dark:border-gray-700/60">
+        🔒 Privacy Respecting
+      </span>
+      <span class="rounded-full bg-gray-100 dark:bg-gray-800/60 px-3 py-1 border border-gray-200/60 dark:border-gray-700/60">
+        ⚡ Community Maintained
+      </span>
     </div>
   </section>
+
+  <!-- Featured Spotlight Section -->
+  <div id="featured" class="scroll-mt-24 mt-6">
+    <FeaturedProject project={featuredProject} />
+  </div>
+
+  <!-- Interactive Directory Island (Search, Filter, Categories, Sort, Bookmarks) -->
+  <Directory client:load />
+
+  <!-- Community Impact & Stats Section -->
+  <StatsSection />
 </Layout>

@@ -1,0 +1,58 @@
+---
+import { PROJECTS, CATEGORIES } from "../data/projects";
+
+const stats = [
+  {
+    value: `${PROJECTS.length}+`,
+    label: "Curated Projects",
+    description: "Open-source apps, SDKs, and APIs"
+  },
+  {
+    value: `${CATEGORIES.length - 1}`,
+    label: "Specialized Categories",
+    description: "From Quran & Hadith to Prayer tools"
+  },
+  {
+    value: "100%",
+    label: "Free & Open Source",
+    description: "Permissive licenses with zero lock-in"
+  },
+  {
+    value: "Global",
+    label: "Ummah Developer Reach",
+    description: "Built collaboratively for the community"
+  }
+];
+---
+
+<section class="mt-20 sm:mt-28">
+  <div class="rounded-3xl border border-emerald-100 bg-gradient-to-b from-white to-emerald-50/40 p-8 sm:p-12 dark:border-emerald-900/40 dark:from-[#0c1618] dark:to-[#080e10] shadow-sm">
+    <div class="text-center max-w-2xl mx-auto">
+      <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+        Empowering Open-Source Ummah Tech
+      </h2>
+      <p class="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
+        Building Digital Tools as Sadaqah Jariyah
+      </p>
+      <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">
+        We index, celebrate, and connect developers creating world-class software rooted in authentic Islamic scholarship, privacy, and open collaboration.
+      </p>
+    </div>
+
+    <div class="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      {stats.map((stat) => (
+        <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-[#101c1f]/80 p-5 text-center backdrop-blur-sm shadow-sm hover:border-emerald-200 dark:hover:border-emerald-800 transition">
+          <div class="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">
+            {stat.value}
+          </div>
+          <div class="mt-1.5 text-sm font-bold text-gray-900 dark:text-white">
+            {stat.label}
+          </div>
+          <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {stat.description}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
